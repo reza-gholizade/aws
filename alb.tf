@@ -17,14 +17,6 @@ resource "aws_security_group" "load_balancer_security_group" {
   vpc_id = aws_vpc.aws-vpc.id
 
   ingress {
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
@@ -73,32 +65,32 @@ resource "aws_lb_listener" "listener" {
   port              = "80"
   protocol          = "HTTP"
 
-  # default_action {
-  #   type             = "forward"
-  #   target_group_arn = aws_lb_target_group.target_group.id
-  # }
-
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener" "listener-https" {
-  load_balancer_arn = aws_alb.application_load_balancer.id
-  port              = "443"
-  protocol          = "HTTPS"
-
-  ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = "<certificate-arn>"
-
-  default_action {
-    target_group_arn = aws_lb_target_group.target_group.id
     type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.id
   }
+
+  #  default_action {
+  #type = "redirect"
+
+  #redirect {
+  #  port        = "443"
+  #  protocol    = "HTTPS"
+  #  status_code = "HTTP_301"
+  #  }
+  # }
 }
+
+#resource "aws_lb_listener" "listener-https" {
+#  load_balancer_arn = aws_alb.application_load_balancer.id
+#  port              = "443"
+#  protocol          = "HTTPS"
+
+#  ssl_policy      = "ELBSecurityPolicy-2016-08"
+#  certificate_arn = "<certificate-arn>"
+
+#  default_action {
+#    target_group_arn = aws_lb_target_group.target_group.id
+#    type             = "forward"
+#  }
+#}

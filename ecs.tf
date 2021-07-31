@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   [
     {
       "name": "${var.app_name}-${var.app_environment}-container",
-      "image": "${aws_ecr_repository.aws-ecr.repository_url}:latest",
+      "image": "${aws_ecr_repository.metabase.repository_url}:v1.0.0",
       "entryPoint": [],
       "environment": ${data.template_file.env_vars.rendered},
       "essential": true,

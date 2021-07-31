@@ -1,5 +1,5 @@
-resource "aws_ecr_repository" "fleetspark_fmb_socket" {
-  name                 = "fmb_socket"
+resource "aws_ecr_repository" "metabase" {
+  name                 = "metabase"
   image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {
@@ -8,7 +8,7 @@ resource "aws_ecr_repository" "fleetspark_fmb_socket" {
 }
 
 resource "aws_ecr_lifecycle_policy" "fmb_policy" {
-  repository = aws_ecr_repository.fleetspark_fmb_socket.name
+  repository = aws_ecr_repository.metabase.name
 
   policy = <<EOF
 {
