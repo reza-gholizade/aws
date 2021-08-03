@@ -18,24 +18,28 @@ resource "aws_cloudwatch_log_group" "log-group" {
 }
 
 data "template_file" "env_vars" {
-  template = file("env_vars.json")
+  template = file("./Container-definition.json")
+  vars = {
+    app_name = "metabase"
+    app_environment = "production"
+    repository_url = "${aws_ecr_repository.metabase.repository_url}"
+  }
 }
 
 resource "aws_ecs_task_definition" "aws-ecs-task" {
-  family = "${var.app_name}-task"
+  family = "metabase-task"
 
   container_definitions = jsonencode([
     {
       name         = "${var.app_name}-${var.app_environment}-container"
       image        = "${aws_ecr_repository.metabase.repository_url}:v1.0.0"
-      environment  = data.template_file.env_vars.rendered
       cpu          = 256
       memory       = 512
       essential    = true
       portMappings = [
         {
-          containerPort = 8080
-          hostPort      = 8080
+          containerPort = 3000
+          hostPort      = 3000
         }
       ]
     }
@@ -79,7 +83,7 @@ resource "aws_ecs_service" "aws-ecs-service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
     container_name   = "${var.app_name}-${var.app_environment}-container"
-    container_port   = 8080
+    container_port   = 3000
   }
 
   depends_on = [aws_lb_listener.listener]
