@@ -26,11 +26,12 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
 
   container_definitions = jsonencode([
     {
-      name      = "${var.app_name}-${var.app_environment}-container"
-      image     = "${aws_ecr_repository.metabase.repository_url}:v1.0.0"
-      cpu       = 256
-      memory    = 512
-      essential = true
+      name         = "${var.app_name}-${var.app_environment}-container"
+      image        = "${aws_ecr_repository.metabase.repository_url}:v1.0.0"
+      environment  = data.template_file.env_vars.rendered
+      cpu          = 256
+      memory       = 512
+      essential    = true
       portMappings = [
         {
           containerPort = 8080
